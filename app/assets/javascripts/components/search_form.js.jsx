@@ -1,9 +1,6 @@
 var SearchForm = createReactClass({
     handleSearch: function() {
-      // var query = document.getElementById("query").value;
       var query = ReactDOM.findDOMNode(this.refs.query).value;
-      //var query = this.refs.query;
-      //query.getValue();
       var self = this;
       $.ajax({
         url: '/api/events/search',
