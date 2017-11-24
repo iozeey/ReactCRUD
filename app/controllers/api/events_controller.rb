@@ -2,7 +2,12 @@ module Api
 	class EventsController < ApplicationController
 		before_action :set_event, only: [:update, :destroy]
 		def index
-      		render json: Event.all
+			render json: {
+        					events: Event.paginate(page: page),
+					        page: page,
+					        pages: Event.pages
+      					}
+      		#render json: Event.all
     	end
 
     	def create
@@ -21,7 +26,7 @@ module Api
     	def search
 		  query = params[:query]
 		  events = Event.where('name LIKE ? OR place LIKE ? OR description LIKE ?',
-		                       "%#{query}%", "%#{query}%", "%#{query}%")
+		                       "%#{query}%", "%#{query}%", "%#{query}%").paginate(page: page)
 		  render json: events
 		end
 
@@ -34,12 +39,19 @@ module Api
 		end
 
 		private
+		
 		def event_params
 			params.require(:event).permit(:name, :description, :event_date, :place)
 		end
+		
 		def set_event
     		@event = Event.find(params[:id])
     	end
+
+    	def page
+    		params[:page] || 1
+    	end
+
 
     	# def sort_by
 	    #   %w(name
